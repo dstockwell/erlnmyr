@@ -1,0 +1,21 @@
+digraph trace {
+
+  imports="['./lib/trace-phases.js', './lib/silly-phases.js']"
+
+  input [data="traces"]
+
+  subgraph cluster0 {
+    readAndGunzipTwice -> jsonParse;
+    jsonParse -> traceFilter -> tracePIDSplitter -> traceTIDSplitter -> traceTree;
+    traceTree -> tracePrettyPrint -> log;
+
+    color=blue;
+    strategy=pipeline;
+  }
+
+  input -> readDir -> readAndGunzipTwice;
+
+  log [tags="['filename']"]
+  traceFilter [traceEvents="['Document::updateStyle','V8.Execute','CSSParserImpl::parseStyleSheet']"];
+  tracePrettyPrint [showTrace="false"];
+}
